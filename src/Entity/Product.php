@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,7 +17,7 @@ class Product
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\NotBlank(message: "Le nom est obligatoire")]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire')]
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -25,16 +27,13 @@ class Product
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[Assert\Positive(message: "Le prix doit être un nombre positif")]
+    #[Assert\Positive(message: 'Le prix doit être un nombre positif')]
     #[ORM\Column]
     private int $price;
 
-    #[Assert\PositiveOrZero(message: "Le stock ne peut pas être négatif")]
+    #[Assert\PositiveOrZero(message: 'Le stock ne peut pas être négatif')]
     #[ORM\Column]
     private int $stock;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
@@ -42,6 +41,18 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
     private Category $category;
+
+    /**
+     * @var Collection<int, ProductImage>
+     */
+    #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', orphanRemoval: true)]
+    private Collection $productImages;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->productImages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,18 +119,6 @@ class Product
         return $this;
     }
 
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): static
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
@@ -140,6 +139,36 @@ class Product
     public function setCategory(Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductImage>
+     */
+    public function getProductImages(): Collection
+    {
+        return $this->productImages;
+    }
+
+    public function addProductImage(ProductImage $productImage): static
+    {
+        if (!$this->productImages->contains($productImage)) {
+            $this->productImages->add($productImage);
+            $productImage->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductImage(ProductImage $productImage): static
+    {
+        if ($this->productImages->removeElement($productImage)) {
+            // // set the owning side to null (unless already changed)
+            // if ($productImage->getProduct() === $this) {
+            //     $productImage->setProduct(null);
+            // }
+        }
 
         return $this;
     }

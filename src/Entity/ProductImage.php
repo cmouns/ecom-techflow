@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductImageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductImageRepository::class)]
 class ProductImage
@@ -14,6 +15,8 @@ class ProductImage
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom du fichier est obligatoire.')]
+    #[Assert\Length(max: 255)]
     private string $filename;
 
     #[ORM\ManyToOne(inversedBy: 'productImages')]

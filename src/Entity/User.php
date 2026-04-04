@@ -3,15 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,6 +23,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+    #[Assert\Email(message: 'Le format de l\'email est invalide.')]
+    #[Assert\Length(max: 180)]
     private string $email;
 
     /**
@@ -35,17 +41,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
+    #[Assert\Length(max: 255)]
     private string $firstName;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom de famille est obligatoire.')]
+    #[Assert\Length(max: 255)]
     private string $lastName;
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
+    /**
+     * @var Collection<int, Order>
+     */
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
+    private Collection $orders;
+
+    /**
+     * @var Collection<int, DeliveryInfo>
+     */
+    #[ORM\OneToMany(targetEntity: DeliveryInfo::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $deliveryInfos;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->orders = new ArrayCollection();
+        $this->deliveryInfos = new ArrayCollection();
     }
 
     public function getId(): int
@@ -161,6 +185,58 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order) && $order->getUser() === $this) {
+            $order->setUser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DeliveryInfo>
+     */
+    public function getDeliveryInfos(): Collection
+    {
+        return $this->deliveryInfos;
+    }
+
+    public function addDeliveryInfo(DeliveryInfo $deliveryInfo): static
+    {
+        if (!$this->deliveryInfos->contains($deliveryInfo)) {
+            $this->deliveryInfos->add($deliveryInfo);
+            $deliveryInfo->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeliveryInfo(DeliveryInfo $deliveryInfo): static
+    {
+        $this->deliveryInfos->removeElement($deliveryInfo);
 
         return $this;
     }

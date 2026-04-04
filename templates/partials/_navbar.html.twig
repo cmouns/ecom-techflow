@@ -1,96 +1,122 @@
 <header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
-    
-    {# --- BARRE SUPÉRIEURE  --- #}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 gap-4">
             
-            {# Logo #}
-            <a href="{{ path('app_home') }}" class="flex items-center gap-2 shrink-0">
-                <span class="text-2xl font-black text-white tracking-widest uppercase text-shadow-sm">Tech Flow</span>
+            {#  BOUTON BURGER #}
+            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden text-gray-300 hover:text-white p-2 -ml-2 outline-none focus:ring-2 focus:ring-blue-500 rounded" aria-label="Ouvrir le menu principal" aria-controls="mobile-menu" aria-expanded="false">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+
+            <a href="{{ path('app_home') }}" class="flex items-center gap-2 shrink-0 mr-auto md:mr-0 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">
+                <span class="text-xl sm:text-2xl font-black text-white tracking-widest uppercase text-shadow-sm">Tech Flow</span>
             </a>
 
-            {# Barre de recherche Centrale #}
-            <form method="get" action="{{ path('app_search') }}" class="hidden md:flex flex-1 max-w-xl mx-8 relative group" role="search">
-                <input type="search" name="q" placeholder="Rechercher un article..." 
+            {# Recherche  #}
+            <form method="get" action="{{ path('app_search') }}" class="hidden md:flex flex-1 max-w-xl mx-8 relative group" role="search" aria-label="Recherche principale">
+                <label for="search-input-desktop" class="sr-only">Rechercher un article</label>
+                <input id="search-input-desktop" type="search" name="q" placeholder="Rechercher un article..." 
                     class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg pl-4 pr-12 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-500">
-                <button type="submit" class="absolute right-0 top-0 h-full px-4 text-gray-400 group-hover:text-blue-500 transition-colors" aria-label="Lancer la recherche">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <button type="submit" class="absolute right-0 top-0 h-full px-4 text-gray-400 group-hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r-lg" aria-label="Lancer la recherche">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </button>
             </form>
 
-            {# Menu Utilisateur & Panier #}
-            <div class="flex items-center space-x-6 shrink-0">
+            <div class="flex items-center space-x-4 sm:space-x-6 shrink-0">
                 
-                {# Dropdown Utilisateur #}
-                <div class="relative group flex items-center h-full py-4">
-                    <button class="flex items-center text-gray-300 hover:text-white transition-colors outline-none cursor-pointer" aria-label="Menu utilisateur">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                {# Menu Compte #}
+                <div class="relative group hidden md:flex items-center h-full py-4">
+                    <button class="flex items-center text-gray-300 hover:text-white transition-colors outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 rounded p-1" aria-label="Menu utilisateur" aria-haspopup="true" aria-expanded="false">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </button>
                     
-                    <div class="absolute right-0 top-[80%] pt-4 hidden group-hover:block w-56 z-50">
-                        
-                        <div class="bg-white rounded-lg shadow-xl py-2 border border-gray-100">
+                    <div class="absolute right-0 top-[80%] pt-4 hidden group-hover:block group-focus-within:block w-56 z-50">
+                        <div class="bg-white rounded-lg shadow-xl py-2 border border-gray-200">
                             {% if app.user %}
                                 <div class="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-lg">
-                                    <p class="text-xs text-gray-500">Connecté en tant que</p>
+                                    <p class="text-xs text-gray-600">Connecté en tant que</p>
                                     <p class="text-sm font-bold text-gray-900 truncate">{{ app.user.firstName }} {{ app.user.lastName }}</p>
                                 </div>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium">Mon compte</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium">Mes commandes</a>
+                                <a href="{{ path('app_account_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-700 font-medium focus:outline-none focus:bg-gray-100 focus:text-blue-700">Mon compte</a>                                
+                                <a href="{{ path('app_account_orders') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-700 font-medium focus:outline-none focus:bg-gray-100 focus:text-blue-700">Mes commandes</a>
                                 <hr class="my-1 border-gray-200">
-                                <a href="{{ path('app_logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">Déconnexion</a>
+                                <a href="{{ path('app_logout') }}" class="block px-4 py-2 text-sm text-red-700 hover:bg-red-50 font-bold focus:outline-none focus:bg-red-50">Déconnexion</a>
                             {% else %}
-                                <a href="{{ path('app_login') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium">Se connecter</a>
-                                <a href="{{ path('app_register') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 font-medium">Créer un compte</a>
+                                <a href="{{ path('app_login') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-700 font-medium focus:outline-none focus:bg-gray-100 focus:text-blue-700">Se connecter</a>
+                                <a href="{{ path('app_register') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-700 font-medium focus:outline-none focus:bg-gray-100 focus:text-blue-700">Créer un compte</a>
                             {% endif %}
                         </div>
-                        
                     </div>
                 </div>
 
-                {# Icône Panier #}
-                <a href="{{ path('app_cart_index')}}" class="relative text-gray-300 hover:text-white transition-colors" aria-label="Voir mon panier">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    {# Badge  #}
-                    {% set count = cart_count() %}
+                {# Panier #}
+                <a href="{{ path('app_cart_index') }}" class="relative text-gray-300 hover:text-white transition-colors flex items-center p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded" aria-label="Voir mon panier {% set count = cart_count() %}{% if count > 0 %}({{ count }} articles){% endif %}">
+                    <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     {% if count > 0 %}
-                    <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">{{ cart_count() }}</span>
+                        <span class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md" aria-hidden="true">{{ count }}</span>
                     {% endif %}
                 </a>
             </div>
         </div>
     </div>
 
-    {# --- BARRE INFÉRIEURE --- #}
-    <div class="bg-gray-800 border-t border-gray-700 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ul class="flex items-center space-x-8 h-12 overflow-x-auto no-scrollbar">
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 py-4 space-y-4 shadow-xl absolute w-full left-0 z-50">
+        {# Recherche Mobile #}
+        <form method="get" action="{{ path('app_search') }}" class="relative" role="search" aria-label="Recherche mobile">
+            <label for="search-input-mobile" class="sr-only">Rechercher</label>
+            <input id="search-input-mobile" type="search" name="q" placeholder="Rechercher..." class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg pl-4 pr-10 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="absolute right-0 top-0 h-full px-3 text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-r-lg" aria-label="Lancer la recherche"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+        </form>
+
+        {# Compte Mobile #}
+        <nav aria-label="Menu utilisateur mobile" class="border-t border-gray-800 pt-4">
+            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-2">Mon compte</p>
+            {% if app.user %}
+                <p class="text-white text-sm font-bold mb-3">{{ app.user.firstName }} {{ app.user.lastName }}</p>
+                <a href="{{ path('app_account_index') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2">Mon profil</a>
+                <a href="{{ path('app_account_orders') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2">Mes commandes</a>
+                <a href="{{ path('app_logout') }}" class="block py-2 text-red-400 font-bold mt-2 hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 rounded px-2">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2">Se connecter</a>
+                <a href="{{ path('app_register') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2">Créer un compte</a>
+            {% endif %}
+        </nav>
+
+        {# Admin Mobile #}
+        {% if is_granted('ROLE_ADMIN') %}
+        <nav aria-label="Menu administration mobile" class="border-t border-gray-800 pt-4 pb-2">
+            <p class="text-xs text-red-400 uppercase tracking-widest font-bold mb-2">Administration</p>
+            <a href="{{ path('app_admin_product_index') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 rounded px-2">Gestion Produits</a>
+            <a href="{{ path('app_admin_category_index') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 rounded px-2">Gestion Catégories</a>
+            <a href="{{ path('app_admin_user_index') }}" class="block py-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 rounded px-2">Gestion Utilisateurs</a>
+        </nav>
+        {% endif %}
+    </div>
+
+    {#  BARRE DES CATÉGORIES  #}
+    <nav aria-label="Menu de navigation principal" class="bg-gray-800 border-t border-gray-700 shadow-sm overflow-x-auto md:overflow-visible">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-w-max md:min-w-0">
+            <ul class="flex items-center space-x-6 sm:space-x-8 h-12">
                 
-                {# Menu Admin  #}
+                {# Admin  #}
                 {% if is_granted('ROLE_ADMIN') %}
-                    <li class="relative group h-full flex items-center shrink-0">
-                        <button class="text-red-400 font-bold text-sm uppercase tracking-wider flex items-center gap-1 hover:text-red-300 transition-colors h-full">
+                    <li class="relative group h-full hidden md:flex items-center shrink-0">
+                        <button class="text-red-400 font-bold text-sm uppercase tracking-wider flex items-center gap-1 hover:text-red-300 transition-colors h-full outline-none focus:ring-2 focus:ring-red-500 rounded px-1" aria-haspopup="true" aria-expanded="false">
                             Administration
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        {# Dropdown Admin #}
-                        <div class="absolute left-0 top-full w-56 bg-white rounded-b-lg shadow-xl py-2 hidden group-hover:block z-50 border border-gray-200">
-                            <a href="{{ path('app_admin_product_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-medium">Gestion Produits</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-medium">Gestion Catégories</a>
-                            <hr class="my-1 border-gray-200">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-medium">Utilisateurs</a>
+                        <div class="absolute left-0 top-full w-56 bg-white rounded-b-lg shadow-xl py-2 hidden group-hover:block group-focus-within:block z-50 border border-gray-200">
+                            <a href="{{ path('app_admin_product_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-medium focus:outline-none focus:bg-gray-100 focus:text-gray-900">Gestion Produits</a>
+                            <a href="{{ path('app_admin_category_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-medium focus:outline-none focus:bg-gray-100 focus:text-gray-900">Gestion Categories</a>
+                            <a href="{{ path('app_admin_user_index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 font-medium focus:outline-none focus:bg-gray-100 focus:text-gray-900">Gestion Utilisateurs</a>
                         </div>
                     </li>
-                    
-                    <li class="text-gray-600 hidden md:block">|</li>
+                    <li class="text-gray-600 hidden md:block" aria-hidden="true">|</li>
                 {% endif %}
 
-                <li><a href="{{ path('app_product_index') }}" class="text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap transition-colors">Tous les produits</a></li>
+                {# Rendu des Catégories #}
+                {{ render(controller('App\\Controller\\NavbarController::categories')) }}
                 
-                <li><a href="#" class="text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap transition-colors">Composants</a></li>
-                <li><a href="#" class="text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap transition-colors">Périphériques</a></li>
-                <li><a href="#" class="text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap transition-colors">Setup Bureau</a></li>
             </ul>
         </div>
-    </div>
+    </nav>
 </header>

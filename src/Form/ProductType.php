@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Form;
 
 use App\Entity\Category;
@@ -47,6 +45,7 @@ class ProductType extends AbstractType
             ->add('price', MoneyType::class, [
                 'label' => 'Prix de vente ',
                 'currency' => 'EUR',
+                // On divise/multiplie par 100 automatiquement car la BDD stocke des centimes
                 'divisor' => 100,
                 'attr' => [
                     'class' => $inputClasses,
@@ -73,6 +72,7 @@ class ProductType extends AbstractType
                 'required' => false,
                 'multiple' => true,
                 'constraints' => [
+                    // On utilise All() car il y a 'multiple => true'. La contrainte s'appliquera à chaque image
                     new All([
                         new File([
                             'maxSize' => '2M',
@@ -83,7 +83,7 @@ class ProductType extends AbstractType
                 ],
                 'attr' => [
                     'class' => 'w-full px-4 py-2 mt-1 rounded-lg border border-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-700 file:text-white hover:file:bg-blue-800 cursor-pointer',
-                    'accept' => 'image/*',
+                    'accept' => 'image/jpeg, image/png, image/webp',
                 ],
             ]);
     }
@@ -92,6 +92,9 @@ class ProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Product::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => '_token',
+            'csrf_token_id' => 'product_item',
         ]);
     }
 }

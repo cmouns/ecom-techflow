@@ -1,0 +1,55 @@
+<footer class="bg-gray-900 border-t border-gray-800 pt-12 pb-8 mt-auto" role="contentinfo">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-center md:text-left">
+            
+            {# LOGO ET DESCRIPTION #}
+            <div class="col-span-1 md:col-span-1">
+                <span class="text-xl font-black text-white tracking-widest uppercase">Tech Flow</span>
+                <p class="mt-4 text-sm text-gray-400">
+                    L'équipement des vrais professionnels. Matériel informatique haut de gamme conçu pour la performance et la fiabilité.
+                </p>
+            </div>
+
+            {# BOUTIQUE #}
+            <nav aria-labelledby="footer-shop-title">
+                <h2 id="footer-shop-title" class="text-white font-bold tracking-wider uppercase text-sm mb-4">Boutique</h2>
+                <ul class="space-y-3">
+                    <li><a href="{{ path('app_product_index') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Tous les produits</a></li>
+                    <li><a href="{{ path('app_cart_index') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Mon panier</a></li>
+                </ul>
+            </nav>
+
+            {#  ESPACE CLIENT  #}
+            <nav aria-labelledby="footer-account-title">
+                <h2 id="footer-account-title" class="text-white font-bold tracking-wider uppercase text-sm mb-4">Espace Client</h2>
+                <ul class="space-y-3">
+                    {% if app.user %}
+                        <li><a href="{{ path('app_account_index') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Mon profil</a></li>
+                        <li><a href="{{ path('app_account_orders') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Mes commandes</a></li>
+                    {% else %}
+                        <li><a href="{{ path('app_login') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Se connecter</a></li>
+                        <li><a href="{{ path('app_register') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Créer un compte</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            {# LÉGAL #}
+            <nav aria-labelledby="footer-legal-title">
+                <h2 id="footer-legal-title" class="text-white font-bold tracking-wider uppercase text-sm mb-4">Informations</h2>
+                <ul class="space-y-3">
+                    <li><a href="{{ path('app_legal_mentions') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Mentions légales</a></li>
+                    <li><a href="{{ path('app_legal_privacy') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Politique de confidentialité</a></li>
+                    <li><a href="{{ path('app_legal_cgv') }}" class="text-sm text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">CGV</a></li>
+                </ul>
+            </nav>
+            
+        </div>
+
+        {# COPYRIGHT #}
+        <div class="pt-8 border-t border-gray-800 text-center md:flex md:justify-between md:items-center">
+            <p class="text-sm text-gray-500">
+                &copy; {{ 'now'|date('Y') }} Tech Flow. Tous droits réservés.
+            </p>
+        </div>
+    </div>
+</footer>

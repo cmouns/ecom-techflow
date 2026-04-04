@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mes informations{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{{ path('app_account_index') }}" class="text-gray-600 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1" aria-label="Retour à mon compte">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <h1 class="text-3xl font-bold text-gray-900">Modifier mes informations</h1>
+    </div>
+
+    <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-200">
+        {{ form_start(form) }}
+            <div class="space-y-6 mb-8">
+                <div>
+                    {{ form_row(form.firstName) }}
+                </div>
+                <div>
+                    {{ form_row(form.lastName) }}
+                </div>
+                <div>
+                    {{ form_row(form.email) }}
+                </div>
+            </div>
+            <button class="bg-blue-600 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold w-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Enregistrer les modifications</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

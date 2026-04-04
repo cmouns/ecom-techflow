@@ -9,17 +9,23 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    /**
+     * Affiche et gère le formulaire de connexion.
+     */
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // Si la personne est déjà connectée,
+        // ça ne sert à rien de lui afficher le formulaire, on la renvoie à l'accueil.
         if ($this->getUser()) {
             return $this->redirectToRoute('app_home');
         }
 
-        // get the login error if there is one
+        // Intercepte les potentielles erreurs de connexion
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
+        // Garde en mémoire le dernier email saisi pour que l'utilisateur
+        // n'ait pas à le retaper s'il s'est trompé de mot de passe
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
@@ -28,9 +34,12 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * Gère la déconnexion de l'utilisateur.
+     */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new \LogicException('Cette méthode peut rester vide - elle sera interceptée par la clé de déconnexion de votre pare-feu.');
     }
 }

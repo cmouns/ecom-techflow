@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Confidentialité | Tech Flow{% endblock %}
+
+{% block body %}
+<main class="bg-gray-50 min-h-screen py-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-200">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-8 border-b border-gray-200 pb-4">Politique de Confidentialité</h1>
+            
+            <div class="space-y-8 text-gray-800 leading-relaxed">
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">1. Collecte des données</h2>
+                    <p>Pour la création de votre compte client et le traitement de vos commandes, nous collectons les données suivantes : Nom, Prénom, Adresse Email, et Adresse de livraison. Vos données de paiement sont traitées de manière sécurisée par notre partenaire Stripe et ne transitent jamais sur nos propres serveurs.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">2. Utilisation des données</h2>
+                    <p>Vos données sont strictement utilisées pour :</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>La préparation et l'expédition de vos commandes.</li>
+                        <li>L'édition de vos factures et bons de livraison.</li>
+                        <li>La sécurisation de votre compte client.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">3. Droit d'accès et à l'oubli</h2>
+                    <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles.</p>
+                    <p class="mt-2">Vous pouvez exercer ce droit à tout moment et en toute autonomie en utilisant le bouton <strong>"Supprimer définitivement mon compte"</strong> disponible dans la section "Mon profil" de votre espace client.</p>
+                </section>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

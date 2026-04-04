@@ -13,7 +13,7 @@
 
         <form method="post">
             {% if error %}
-                <div class="mb-6 p-4 bg-red-900/50 border border-red-800 text-red-200 rounded-lg text-sm">
+                <div class="mb-6 p-4 bg-red-900/50 border border-red-800 text-red-200 rounded-lg text-sm" role="alert">
                     {{ error.messageKey|trans(error.messageData, 'security') }}
                 </div>
             {% endif %}
@@ -36,9 +36,9 @@
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            {# Bouton de connexion classique #}
+            {# Bouton de connexion #}
             <button type="submit" 
-                class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors mt-2">
+                class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
                 Se connecter
             </button>
 
@@ -46,7 +46,7 @@
             <div class="mt-6 text-center">
                 <p class="text-sm text-gray-400">
                     Pas encore de compte ? 
-                    <a href="{{ path('app_register') }}" class="text-blue-500 hover:text-blue-400 font-medium transition-colors">
+                    <a href="{{ path('app_register') }}" class="text-blue-500 hover:text-blue-400 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">
                         Créer un compte
                     </a>
                 </p>

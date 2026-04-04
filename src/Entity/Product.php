@@ -18,10 +18,12 @@ class Product
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'Le nom est obligatoire')]
+    #[Assert\Length(max: 255, maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.')]
     #[ORM\Column(length: 255)]
     private string $name;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(max: 255)]
     private string $slug;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -48,10 +50,17 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', orphanRemoval: true)]
     private Collection $productImages;
 
+    /**
+     * @var Collection<int, OrderItem>
+     */
+    #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'product', orphanRemoval: true)]
+    private Collection $orderItems;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->productImages = new ArrayCollection();
+        $this->orderItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -169,6 +178,31 @@ class Product
             //     $productImage->setProduct(null);
             // }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderItem>
+     */
+    public function getOrderItems(): Collection
+    {
+        return $this->orderItems;
+    }
+
+    public function addOrderItem(OrderItem $orderItem): static
+    {
+        if (!$this->orderItems->contains($orderItem)) {
+            $this->orderItems->add($orderItem);
+            $orderItem->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderItem(OrderItem $orderItem): static
+    {
+        $this->orderItems->removeElement($orderItem);
 
         return $this;
     }

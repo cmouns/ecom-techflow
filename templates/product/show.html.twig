@@ -6,9 +6,8 @@
 <main class="bg-white min-h-screen py-8 overflow-x-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {# ---  Fil d'Ariane --- #}
         <nav aria-label="Fil d'Ariane" class="flex items-center text-sm text-gray-700 mb-8 font-medium">
-            <a href="{{ path('app_product_index') }}" class="hover:text-black hover:underline transition-colors flex items-center gap-1 text-red-700">
+            <a href="{{ path('app_product_index') }}" class="hover:text-black hover:underline transition-colors flex items-center gap-1 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded p-1">
                  Retour
             </a>
             <span class="mx-4 text-gray-900 font-bold" aria-current="page"> {{ product.category.name }}</span>
@@ -16,49 +15,54 @@
             <span class="text-gray-600 truncate max-w-[200px] md:max-w-none">{{ product.name }}</span>
         </nav>
 
-        {# --- 2. Conteneur Principal --- #}
         <div class="flex flex-col md:flex-row gap-10">
 
-            {# --- image : gauche  --- #}
             <div class="w-full md:w-3/5 flex flex-col-reverse md:flex-row gap-4">
                 
-                {# TODO: Rendre la galerie de miniatures dynamique quand l'entité Product aura plusieurs images #}
-                <div class="flex flex-row md:flex-col gap-3 w-full md:w-20 overflow-x-auto md:overflow-hidden pb-2 md:pb-0">
-                    {# Ajout d'un aria-label sur le bouton de miniature #}
-                    <button aria-label="Afficher la première image de {{ product.name }}" class="border border-black rounded shrink-0 w-20 h-20 md:w-full md:h-auto md:aspect-square p-1 focus:ring-4 focus:ring-gray-300 outline-none">
-                        <img src="{{ asset('uploads/images/ecran.jpg') }}" class="object-contain w-full h-full mix-blend-multiply" alt="">
-                    </button>
+                <div class="flex flex-row md:flex-col gap-3 w-full md:w-20 overflow-x-auto md:overflow-hidden pb-2 md:pb-0" role="tablist" aria-label="Miniatures des images du produit">
+                    {% if product.productImages is not empty %}
+                        {% for image in product.productImages %}
+                            <button type="button" role="tab" onclick="document.getElementById('mainImage').src='{{ asset('uploads/images/' ~ image.filename) }}'" aria-label="Afficher l'image {{ loop.index }} de {{ product.name }}" class="border border-gray-300 hover:border-gray-900 rounded shrink-0 w-20 h-20 md:w-full md:h-auto md:aspect-square p-1 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all">
+                                <img src="{{ asset('uploads/images/' ~ image.filename) }}" class="object-contain w-full h-full mix-blend-multiply" alt="">
+                            </button>
+                        {% endfor %}
+                    {% else %}
+                        <button type="button" role="tab" aria-label="Image par défaut de {{ product.name }}" class="border border-gray-900 rounded shrink-0 w-20 h-20 md:w-full md:h-auto md:aspect-square p-1 focus:ring-2 focus:ring-blue-600 outline-none">
+                            <img src="{{ asset('uploads/images/ecran.jpg') }}" class="object-contain w-full h-full mix-blend-multiply" alt="">
+                        </button>
+                    {% endif %}
                 </div>
 
-                <div class="flex-1 bg-white flex items-center justify-center relative p-4">
-                    {# Ajout de contexte à l'attribut alt #}
-                    <img src="{{ asset('uploads/images/ecran.jpg') }}" 
-                         alt="Photo principale du produit : {{ product.name }}" 
-                         class="object-contain w-full max-h-[500px] mix-blend-multiply drop-shadow-sm">
+                <div class="flex-1 bg-white flex items-center justify-center relative p-4" role="tabpanel" aria-label="Image principale">
+                    {% if product.productImages is not empty %}
+                        {% set firstImage = product.productImages|first %}
+                        {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
+                        {% set imageClasses = 'object-contain w-full max-h-[500px] mix-blend-multiply drop-shadow-sm transition-all duration-300' %}
+                    {% else %}
+                        {% set imageUrl = asset('uploads/images/ecran.jpg') %}
+                        {% set imageClasses = 'object-contain w-full max-h-[500px] mix-blend-multiply drop-shadow-sm' %}
+                    {% endif %}
+
+                    <img id="mainImage" src="{{ imageUrl }}" alt="Aperçu principal de {{ product.name }}" class="{{ imageClasses }}">
                 </div>
             </div>
 
-            {# --- droite : informations --- #}
             <div class="w-full md:w-2/5 flex flex-col">
                 <h1 class="text-2xl font-bold text-gray-900 leading-snug mb-2 uppercase tracking-tight">
                     {{ product.name }}
                 </h1>
 
-                {# prix  #}
                 <div class="flex items-end gap-3 mb-6">
-                    {# Ajout de aria-label pour la lecture du prix #}
-                    <span class="text-2xl font-bold text-black" aria-label="Prix : {{ (product.price / 100)|number_format(2, ',', ' ') }} euros">
-                        {{ (product.price / 100)|number_format(2, ',', ' ') }}€
+                    <span class="text-2xl font-bold text-gray-900">
+                        <span class="sr-only">Prix : </span>{{ (product.price / 100)|number_format(2, ',', ' ') }}€
                     </span>
                 </div>
 
-                {# Formulaire ajout panier #}
                 <form action="{{ path('app_cart_add', {id: product.id}) }}" method="POST" class="mb-4">
-                    {# Sélection Quantité Dynamique (Si en stock) #}
                     {% if product.stock > 0 %}
                         <div class="mb-4">
                             <label for="quantity" class="block text-sm font-bold text-gray-900 mb-2">Quantité:</label>
-                            <select id="quantity" name="quantity" class="border border-gray-300 rounded p-2.5 w-24 bg-white text-sm focus:border-black focus:ring-2 outline-none">
+                            <select id="quantity" name="quantity" class="border border-gray-400 rounded p-2.5 w-24 bg-white text-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer">
                                 {% set max_qty = min(99, product.stock) %}
                                 {% for i in 1..max_qty %}
                                     <option value="{{ i }}">{{ i }}</option>
@@ -67,27 +71,22 @@
                         </div>
                         
                         <p class="text-sm text-gray-900 font-bold mb-6">
-                            Disponibilité: <span class="text-[#008A00] font-normal">En stock</span>
+                            Disponibilité: <span class="text-green-700 font-normal">En stock</span>
                         </p>
                     {% else %}
-                        {# Ajout d'un rôle d'alerte pour les ruptures de stock #}
                         <p role="alert" class="text-sm text-red-700 font-bold mb-6">
                             Cet article est actuellement en rupture de stock.
                         </p>
                     {% endif %}
 
-                        {# Boutons panier  #}
-                    <button type="submit" class="w-1/2 font-bold py-3.5 px-4 rounded transition-colors text-sm focus:ring-4 focus:ring-gray-400 outline-none
-                            {{ product.stock > 0 ? 'bg-black hover:bg-gray-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed' }}"
-                            {{ product.stock == 0 ? 'disabled' : '' }}>
+                    <button type="submit" class="w-1/2 font-bold py-3.5 px-4 rounded transition-colors text-sm focus:ring-2 focus:ring-offset-2 outline-none {{ product.stock > 0 ? 'bg-blue-700 hover:bg-blue-900 text-white focus:ring-blue-600' : 'bg-gray-300 text-gray-600 cursor-not-allowed' }}" {{ product.stock == 0 ? 'disabled' : '' }}>
                         Ajouter au panier
                     </button>
                 </form>
 
-                {# Description #}
                 <div class="border-t border-gray-200 pt-6 mt-2">
                     <h2 class="text-sm font-bold mb-3 uppercase tracking-wider text-gray-900">Description</h2> 
-                    <p class="text-sm text-gray-700 leading-relaxed"> 
+                    <p class="text-sm text-gray-800 leading-relaxed"> 
                         {{ product.description }}
                     </p>
                 </div>

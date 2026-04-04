@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation - Tech Flow{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <nav class="flex items-center text-sm font-medium mb-10 text-gray-600" aria-label="Étapes de commande">
+        <a href="{{ path('app_checkout_index') }}" class="hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">1. Expédition</a>
+        <span class="mx-3 text-gray-400" aria-hidden="true">/</span>
+        <span class="text-blue-700 font-bold" aria-current="step">2. Confirmation</span>
+        <span class="mx-3 text-gray-400" aria-hidden="true">/</span>
+        <span>3. Paiement</span>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div class="lg:col-span-8 space-y-8">
+            <h1 class="text-2xl font-bold text-gray-900">Vérifiez votre commande</h1>
+            
+            <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-6" aria-labelledby="delivery-address-heading">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 id="delivery-address-heading" class="text-lg font-bold text-gray-900">Adresse de livraison</h2>
+                    <a href="{{ path('app_checkout_index') }}" class="text-sm font-bold text-blue-700 hover:text-blue-900 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1" aria-label="Modifier l'adresse de livraison">Modifier</a>
+                </div>
+                <div class="text-gray-800 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <p class="font-bold text-gray-900">{{ deliveryInfo.firstName }} {{ deliveryInfo.lastName }}</p>
+                    <p>{{ deliveryInfo.address }}</p>
+                    <p>{{ deliveryInfo.postalCode }} {{ deliveryInfo.city }}, {{ deliveryInfo.country }}</p>
+                    <p class="text-sm text-gray-600 mt-2">{{ deliveryInfo.phone }}</p>
+                </div>
+            </section>
+        </div>
+
+        <aside class="lg:col-span-4">
+            <div class="sticky top-24 rounded-xl p-6 bg-white shadow-xl border border-gray-200">
+                <h2 class="text-lg font-bold mb-6 text-gray-900">Récapitulatif de commande</h2>
+                
+                <div class="space-y-4 mb-6 max-h-72 overflow-y-auto pr-2" tabindex="0" aria-label="Liste des articles">
+                    {% for item in items %}
+                        <div class="flex gap-3">
+                            <div class="w-14 h-14 bg-gray-50 rounded border border-gray-200 shrink-0 overflow-hidden flex items-center justify-center">
+                                {% if item.product.productImages is not empty %}
+                                    {% set firstImage = item.product.productImages|first %}
+                                    <img src="{{ asset('uploads/images/' ~ firstImage.filename) }}" alt="Miniature de {{ item.product.name }}" class="w-full h-full object-cover mix-blend-multiply">
+                                {% else %}
+                                    <img src="{{ asset('uploads/images/ecran.jpg') }}" alt="Miniature par défaut pour {{ item.product.name }}" class="w-full h-full object-cover mix-blend-multiply">
+                                {% endif %}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-gray-900 truncate">{{ item.product.name }}</p>
+                                <p class="text-[11px] text-gray-600">Qté : {{ item.quantity }}</p>
+                            </div>
+                            <p class="text-xs font-bold text-gray-900">{{ ((item.product.price * item.quantity) / 100)|number_format(2, ',', ' ') }}€</p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="border-t border-gray-200 pt-4 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-700">Sous-total :</span>
+                        <span class="font-medium text-gray-900">{{ (subtotal / 100)|number_format(2, ',', ' ') }}€</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-700">Frais de livraison :</span>
+                        <span class="font-medium text-gray-900">{{ shippingCost == 0 ? 'Gratuit' : (shippingCost / 100)|number_format(2, ',', ' ') ~ '€' }}</span>
+                    </div>
+                    <div class="flex justify-between text-xl font-bold pt-4 text-blue-700">
+                        <span>Total TTC :</span>
+                        <span>{{ (total / 100)|number_format(2, ',', ' ') }}€</span>
+                    </div>
+                </div>
+
+                {# SECTION CGV ET BOUTON PAIEMENT #}
+                <div class="mt-8 border-t border-gray-200 pt-6">
+                    
+                    <div class="flex items-start space-x-3 mb-6">
+                        <div class="flex items-center h-5">
+                            <input id="cgv-checkbox" type="checkbox" class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer" aria-describedby="cgv-error">
+                        </div>
+                        <label for="cgv-checkbox" class="text-sm text-gray-700 cursor-pointer">
+                            J'ai lu et j'accepte sans réserve les <a href="{{ path('app_legal_cgv') }}" target="_blank" class="text-blue-700 hover:text-blue-900 hover:underline font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">Conditions Générales de Vente</a> *
+                        </label>
+                    </div>
+
+                    <p id="cgv-error" class="text-red-600 text-sm font-bold mb-3 hidden" role="alert">Veuillez accepter les CGV avant de procéder au paiement.</p>
+
+                    <button onclick="checkCgvAndPay()" class="flex items-center justify-center w-full bg-blue-700 hover:bg-blue-900 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        Procéder au paiement sécurisé
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+    function checkCgvAndPay() {
+        const checkbox = document.getElementById('cgv-checkbox');
+        const errorMessage = document.getElementById('cgv-error');
+        
+        if (checkbox.checked) {
+            errorMessage.classList.add('hidden');
+            window.location.href = "{{ path('app_stripe_checkout') }}";
+        } else {
+            errorMessage.classList.remove('hidden');
+            checkbox.parentElement.classList.add('animate-pulse');
+            checkbox.focus();
+            setTimeout(() => {
+                checkbox.parentElement.classList.remove('animate-pulse');
+            }, 1000);
+        }
+    }
+</script>
+{% endblock %}

@@ -16,42 +16,22 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     /**
-     * @return Product[]
+     * Recherche des produits dont le nom contient le mot-clé saisi.
+     *
+     * @return Product[] Retourne un tableau d'objets Product
      */
     public function searchByName(string $search): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.name LIKE :val')
+            // Ajoute les '%' ici et utilise setParameter pour protéger des injections SQL
             ->setParameter('val', '%'.$search.'%')
+            // Affiche les produits les plus récents en premier
             ->orderBy('p.createdAt', 'DESC')
+            // Limite à 20 résultats max pour ne pas ralentir le serveur
             ->setMaxResults(20)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

@@ -6,12 +6,12 @@
 <div class="min-h-screen bg-gray-50 py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {# --- En-tête de la recherche --- #}
+        {#  En-tête de la recherche  #}
         <div class="mb-10 pb-6 border-b border-gray-200">
             <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">
                 Résultats de recherche
             </h1>
-            <p class="text-gray-600 mt-2 text-lg">
+            <p class="text-gray-800 mt-2 text-lg">
                 {% if query %}
                     Vous avez cherché : <span class="font-bold text-black">"{{ query }}"</span>
                 {% else %}
@@ -20,24 +20,30 @@
             </p>
             
             {% if query %}
-                <p class="text-sm text-gray-500 mt-1">
+                <p class="text-sm text-gray-700 mt-1" aria-live="polite">
                     {{ products|length }} produit(s) trouvé(s)
                 </p>
             {% endif %}
         </div>
 
-        {# --- Affichage des résultats --- #}
+        {#  Affichage des résultats  #}
         {% if products|length > 0 %}
             
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {% for product in products %}
-                    <div class="bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col group p-4">
+                    <article class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col group p-4">
                         
-                        <div class="aspect-video w-full rounded-md bg-gray-100 mb-4 flex items-center justify-center">
-                            <span class="text-xs text-gray-400 font-bold uppercase">Image</span>
+                        <div class="aspect-4/3 w-full rounded-md bg-gray-50 flex items-center justify-center overflow-hidden mb-4 relative">
+                            {% if product.productImages is not empty %}
+                                {% set firstImage = product.productImages|first %}
+                                {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
+                            {% else %}
+                                {% set imageUrl = asset('uploads/images/ecran.jpg') %}
+                            {% endif %}
+                            <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
                         </div>
 
-                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">
+                        <span class="text-[10px] font-bold text-blue-800 uppercase tracking-wider mb-1">
                             {{ product.category.name }}
                         </span>
                         
@@ -45,16 +51,16 @@
                             {{ product.name }}
                         </h2>
                         
-                        <div class="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
-                            <span class="text-lg font-black text-black">
-                                {{ (product.price / 100)|number_format(2, ',', ' ') }}€
+                        <div class="mt-auto pt-4 flex items-center justify-between border-t border-gray-100">
+                            <span class="text-lg font-bold text-blue-700">
+                                <span class="sr-only">Prix : </span>{{ (product.price / 100)|number_format(2, ',', ' ') }}€
                             </span>
                         </div>
                         
-                        <a href="{{ path('app_product_show', { slug: product.slug }) }}" class="mt-4 block text-center bg-gray-900 text-white text-xs font-bold py-2.5 rounded-lg hover:bg-gray-800 transition-colors">
+                        <a href="{{ path('app_product_show', { slug: product.slug }) }}" aria-label="Voir le produit {{ product.name }}" class="mt-4 block text-center bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg hover:bg-blue-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
                             Voir le produit
                         </a>
-                    </div>
+                    </article>
                 {% endfor %}
             </div>
 
@@ -62,13 +68,13 @@
             
             {# Si aucun résultat #}
             {% if query %}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Aucun composant trouvé</h3>
-                    <p class="text-gray-500 max-w-md mx-auto">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center" role="alert">
+                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-lg font-bold text-gray-900 mb-2">Aucun article trouvé</h2>
+                    <p class="text-gray-700 max-w-md mx-auto">
                         Nous n'avons trouvé aucun article correspondant à "{{ query }}". Vérifiez l'orthographe ou essayez d'autres mots-clés.
                     </p>
-                    <a href="{{ path('app_product_index') }}" class="inline-block mt-6 px-6 py-2 bg-blue-50 text-blue-600 font-medium rounded-lg hover:bg-blue-100 transition-colors">
+                    <a href="{{ path('app_product_index') }}" class="inline-block mt-6 px-6 py-2 bg-blue-50 text-blue-700 font-bold rounded-lg hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
                         Retourner au catalogue
                     </a>
                 </div>

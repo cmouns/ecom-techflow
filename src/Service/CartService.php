@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Service;
 
 use App\Repository\ProductRepository;
@@ -9,6 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CartService
 {
+    // Utilise la promotion de propriétés du constructeur pour injecter mes dépendances
     public function __construct(
         private RequestStack $requestStack,
         private ProductRepository $productRepository,
@@ -16,27 +15,34 @@ class CartService
     }
 
     /**
-     * Ajoute un produit avec une quantité spécifique (par défaut 1).
+     * Ajoute un produit au panier ou incrémente sa quantité s'il y est déjà.
      */
     public function add(int $id, int $quantity = 1): void
     {
+        // On passe par le RequestStack pour accéder à la session de l'utilisateur
         $session = $this->requestStack->getSession();
         $cart = $session->get('cart', []);
 
-        $cart[$id] = ($cart[$id] ?? 0) + $quantity;
+        // Si le produit n'est pas encore dans le panier, on l'initialise à 0
+        if (empty($cart[$id])) {
+            $cart[$id] = 0;
+        }
 
+        $cart[$id] += $quantity;
+
+        // Sauvegarde le nouveau tableau dans la session
         $session->set('cart', $cart);
     }
 
     /**
-     * Force une quantité précise (Style Amazon).
-     * Si 0, on supprime l'article.
+     * Définit une quantité précise pour un article du panier.
      */
     public function setQuantity(int $id, int $quantity): void
     {
         $session = $this->requestStack->getSession();
         $cart = $session->get('cart', []);
 
+        // Retire l'article si le client met la quantité à 0 ou en négatif
         if ($quantity <= 0) {
             $this->remove($id);
 
@@ -47,24 +53,33 @@ class CartService
         $session->set('cart', $cart);
     }
 
+    /**
+     * Supprime totalement une ligne du panier.
+     */
     public function remove(int $id): void
     {
         $session = $this->requestStack->getSession();
         $cart = $session->get('cart', []);
 
         if (!empty($cart[$id])) {
-            unset($cart[$id]);
+            unset($cart[$id]); // Détruit l'entrée du tableau correspondante
         }
 
         $session->set('cart', $cart);
     }
 
+    /**
+     * Vide intégralement le panier.
+     */
     public function empty(): void
     {
+        // Supprime la clé 'cart' de la session
         $this->requestStack->getSession()->remove('cart');
     }
 
     /**
+     * Récupère le panier complet.
+     *
      * @return array<int, array{product: \App\Entity\Product, quantity: int}>
      */
     public function getFullCart(): array
@@ -75,9 +90,12 @@ class CartService
 
         foreach ($cart as $id => $quantity) {
             $product = $this->productRepository->find($id);
+
+            // Si le produit existe en base, on l'ajoute
             if ($product) {
                 $fullCart[] = ['product' => $product, 'quantity' => $quantity];
             } else {
+                // S'il a été supprimé de la base entre-temps, on le retire du panier du client
                 $this->remove($id);
             }
         }
@@ -85,10 +103,15 @@ class CartService
         return $fullCart;
     }
 
+    /**
+     * Calcule le montant total du panier.
+     */
     public function getTotal(): int
     {
         $total = 0;
+
         foreach ($this->getFullCart() as $item) {
+            // Multiplie le prix unitaire par la quantité
             $total += $item['product']->getPrice() * $item['quantity'];
         }
 

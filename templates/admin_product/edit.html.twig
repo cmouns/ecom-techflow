@@ -8,16 +8,16 @@
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-900">Modifier le produit</h1>
-            <p class="text-gray-500 text-sm mt-1">ID: #{{ product.id }} | Créé le {{ product.createdAt|date('d/m/Y') }}</p>
+            <p class="text-gray-600 text-sm mt-1">ID: #{{ product.id }} | Créé le {{ product.createdAt|date('d/m/Y') }}</p>
         </div>
-        <a href="{{ path('app_admin_product_index') }}" class="text-blue-700 hover:text-blue-800 transition-colors">
+        <a href="{{ path('app_admin_product_index') }}" class="text-blue-700 hover:text-blue-800 underline transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">
             Retour au catalogue
         </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {# COLONNE GAUCHE : FORMULAIRE #}
+        {# FORMULAIRE GAUCHE #}
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 {{ form_start(form) }}
@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="mt-8 flex gap-3">
-                        <button type="submit" class="flex-1 bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-all shadow-lg shadow-gray-200">
+                        <button type="submit" class="flex-1 bg-blue-700 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-800 transition-all shadow-lg shadow-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2">
                             Enregistrer les modifications
                         </button>
                     </div>
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        {# COLONNE DROITE : APERÇU DE LA GALERIE #}
+        {# APERÇU DE LA GALERIE DROITE #}
         <div class="space-y-6">
             <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
                 <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Galerie Actuelle</h2>
@@ -54,15 +54,16 @@
                             <div class="group relative aspect-square rounded-lg overflow-hidden border border-gray-300 bg-white shadow-sm">
                                 <img src="{{ asset('uploads/images/' ~ image.filename) }}" 
                                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" 
-                                     alt="Aperçu">
+                                     alt="Aperçu de la galerie pour {{ product.name }}">
                                 <form method="post" action="{{ path('app_admin_product_image_delete', {'id': image.id}) }}" 
                                       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');" 
-                                      class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                      class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-within:opacity-100">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ image.id) }}">
                                     <button type="submit" 
-                                            class="h-8 w-8 flex items-center justify-center bg-red-600 text-white rounded-full hover:bg-red-800 shadow-lg active:scale-95"
+                                            class="h-8 w-8 flex items-center justify-center bg-red-700 text-white rounded-full hover:bg-red-900 shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                            aria-label="Supprimer cette image de la galerie"
                                             title="Retirer cette image">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
@@ -70,10 +71,10 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <p class="text-xs text-gray-500 mt-4 italic">Note: Les nouvelles images seront ajoutées à la suite.</p>
+                    <p class="text-xs text-gray-600 mt-4 italic">Note: Les nouvelles images seront ajoutées à la suite.</p>
                 {% else %}
                     <div class="py-12 text-center border-2 border-dashed border-gray-300 rounded-lg">
-                        <p class="text-sm text-gray-400">Aucune photo dans la galerie</p>
+                        <p class="text-sm text-gray-500">Aucune photo dans la galerie</p>
                     </div>
                 {% endif %}
             </div>

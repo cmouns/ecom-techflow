@@ -5,22 +5,35 @@
 {% block body %}
 <div class="min-h-screen bg-gray-50 py-12">
     <div class="max-w-5xl mx-auto px-4">
-        <a href=""></a>
         <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Votre Panier</h1>
 
         {% if items|length > 0 %}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-4">
                     {% for item in items %}
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-bold text-blue-600">{{ item.product.category.name }}</span>
-                                <h2 class="text-lg font-bold text-gray-900">{{ item.product.name }}</h2>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            
+                            <div class="flex items-center gap-4 w-full sm:w-auto flex-1">
+                                <div class="w-20 h-20 bg-gray-50 rounded-lg shrink-0 flex items-center justify-center overflow-hidden relative">
+                                    {% if item.product.productImages is not empty %}
+                                        {% set firstImage = item.product.productImages|first %}
+                                        {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
+                                        <img src="{{ imageUrl }}" alt="Aperçu de {{ item.product.name }}" class="object-contain w-full h-full mix-blend-multiply">
+                                    {% else %}
+                                        {% set imageUrl = asset('uploads/images/ecran.jpg') %}
+                                        <img src="{{ imageUrl }}" alt="{{ item.product.name }}" class="object-contain w-full h-full mix-blend-multiply">
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-sm font-bold text-blue-700">{{ item.product.category.name }}</span>
+                                    <h2 class="text-lg font-bold text-gray-900 truncate">{{ item.product.name }}</h2>
+                                </div>
                             </div>
 
-                            {# Dropdown #}
-                            <form action="{{ path('app_cart_update', {id: item.product.id}) }}" method="POST">
-                                <select name="quantity" onchange="this.form.submit()" class="border rounded-lg p-2 bg-gray-50 text-sm font-bold focus:ring-2 focus:ring-black outline-none cursor-pointer">
+                            <form action="{{ path('app_cart_update', {id: item.product.id}) }}" method="POST" class="shrink-0">
+                                <label for="quantity-{{ item.product.id }}" class="sr-only">Quantité pour {{ item.product.name }}</label>
+                                <select id="quantity-{{ item.product.id }}" name="quantity" onchange="this.form.submit()" class="border border-gray-300 rounded-lg p-2 bg-gray-50 text-sm font-bold focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none cursor-pointer">
                                     <option value="0">0 (Supprimer)</option>
                                     {% for i in 1.. item.quantity %}
                                         <option value="{{ i }}" {{ item.quantity == i ? 'selected' : '' }}>{{ i }}</option>
@@ -31,30 +44,33 @@
                                 </select>
                             </form>
 
-                            <div class="text-right">
-                                <p class="text-xl font-black text-black">{{ ((item.product.price * item.quantity) / 100)|number_format(2, ',', ' ') }}€</p>
-                                <a href="{{ path('app_cart_remove', {id: item.product.id}) }}" class="text-xs text-red-500 hover:underline">Supprimer</a>
+                            <div class="text-right shrink-0">
+                                <p class="text-xl font-semibold text-gray-900">{{ ((item.product.price * item.quantity) / 100)|number_format(2, ',', ' ') }}€</p>
+                                <a href="{{ path('app_cart_remove', {id: item.product.id}) }}" class="text-xs text-red-600 font-medium hover:text-red-800 hover:underline focus:outline-none focus:ring-2 focus:ring-red-600 rounded p-1" aria-label="Supprimer {{ item.product.name }} du panier">Supprimer</a>
                             </div>
                         </div>
                     {% endfor %}
-                    <a href="{{ path('app_cart_empty') }}" class="inline-block text-sm text-red-500 hover:underline mt-4">Vider entièrement le panier</a>
+                    
+                    <div class="text-left mt-4">
+                        <a href="{{ path('app_cart_empty') }}" class="inline-block text-md font-medium text-red-600 hover:text-red-800 hover:underline focus:outline-none focus:ring-2 focus:ring-red-600 rounded p-1">Vider entièrement le panier</a>
+                    </div>
                 </div>
 
-                <div class="bg-gray-900 p-8 rounded-2xl text-white h-fit shadow-xl">
-                    <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">RÉSUMÉ</h3>
-                    <div class="flex justify-between text-2xl font-black mb-8">
+                <div class="p-8 rounded-2xl bg-white border border-gray-200 text-gray-900 h-fit shadow-sm sticky top-6">
+                    <h2 class="text-xl font-bold mb-6 border-b border-gray-200 pb-4">RÉSUMÉ</h2>
+                    <div class="flex justify-between text-2xl font-bold mb-8">
                         <span>TOTAL</span>
-                        <span class="text-blue-400">{{ (total / 100)|number_format(2, ',', ' ') }}€</span>
+                        <span class="text-blue-700">{{ (total / 100)|number_format(2, ',', ' ') }}€</span>
                     </div>
-                    <button class="w-full py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-bold transition-all shadow-lg hover:shadow-blue-500/30">
+                    <a href="{{ path('app_checkout_index') }}" class="block w-full py-4 text-white bg-blue-700 hover:bg-blue-800 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
                         VALIDER LA COMMANDE
-                    </button>
+                    </a>
                 </div>
             </div>
         {% else %}
-            <div class="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                <p class="text-gray-500 mb-6">Votre panier est vide.</p>
-                <a href="{{ path('app_product_index') }}" class="bg-black text-white px-8 py-3 rounded-lg font-bold">Retour à la boutique</a>
+            <div class="text-center py-20 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                <p class="text-gray-600 mb-6 font-medium">Votre panier est vide.</p>
+                <a href="{{ path('app_product_index') }}" class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-bold inline-block transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Retour à la boutique</a>
             </div>
         {% endif %}
     </div>

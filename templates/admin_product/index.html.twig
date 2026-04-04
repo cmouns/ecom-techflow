@@ -7,18 +7,18 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {% for message in app.flashes('success') %}
-            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 font-medium rounded-lg shadow-sm flex justify-between items-center" role="alert">
+            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-600 text-green-800 font-medium rounded-lg shadow-sm flex justify-between items-center" role="alert">
                 <span>{{ message }}</span>
-                <button type="button" onclick="this.parentElement.remove()" class="text-green-500 hover:text-green-700 text-xl">&times;</button>
+                <button type="button" onclick="this.parentElement.remove()" class="text-green-600 hover:text-green-800 text-xl focus:outline-none focus:ring-2 focus:ring-green-600 rounded" aria-label="Fermer l'alerte">&times;</button>
             </div>
         {% endfor %}
 
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Catalogue Produits</h1>
-                <p class="text-sm text-gray-500 mt-1">Gestion des produits.</p>
+                <p class="text-sm text-gray-600 mt-1">Gestion des produits.</p>
             </div>
-            <a href="{{ path('app_admin_product_new') }}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg active:scale-95">
+            <a href="{{ path('app_admin_product_new') }}" class="inline-flex items-center justify-center bg-green-600 hover:bg-green-800 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg active:scale-95 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                 + Ajouter un produit
             </a>
         </div>
@@ -28,68 +28,66 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Produit</th>
-                            <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">Catégorie</th>
-                            <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-center">Prix</th>
-                            <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-center">État Stock</th>
-                            <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-black text-gray-600 uppercase tracking-widest whitespace-nowrap">Produit</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-black text-gray-600 uppercase tracking-widest whitespace-nowrap">Catégorie</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-black text-gray-600 uppercase tracking-widest text-center whitespace-nowrap">Prix</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-black text-gray-600 uppercase tracking-widest text-center whitespace-nowrap">État Stock</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-black text-gray-600 uppercase tracking-widest text-right whitespace-nowrap">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {% for product in products %}
                             <tr class="hover:bg-gray-50/50 transition-colors group">
                                 
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="h-14 w-14 shrink-0 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden shadow-inner">
                                             {% if product.productImages is not empty %}
                                                 <img src="{{ asset('uploads/images/' ~ product.productImages|first.filename) }}" 
                                                      class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                                                     alt="{{ product.name }}">
+                                                     alt="Miniature de {{ product.name }}">
                                             {% else %}
-                                                <div class="h-full w-full flex items-center justify-center text-[10px] text-gray-400 font-bold">NO PIC</div>
+                                                <div class="h-full w-full flex items-center justify-center text-[10px] text-gray-500 font-bold" aria-hidden="true">NO PIC</div>
                                             {% endif %}
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-bold text-gray-900">{{ product.name }}</div>
-                                            <div class="text-[10px] text-gray-400 font-mono mt-0.5">{{ product.slug|length > 20 ? product.slug|slice(0, 20) ~ '...' : product.slug }}</div>
+                                            <div class="text-[10px] text-gray-500 font-mono mt-0.5" aria-label="Slug du produit">{{ product.slug|length > 20 ? product.slug|slice(0, 20) ~ '...' : product.slug }}</div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200">
                                         {{ product.category.name }}
                                     </span>
                                 </td>
 
-                                <td class="px-6 py-4 text-sm font-black text-gray-900 text-center">
-                                    {{ (product.price / 100)|number_format(2, ',', ' ') }} <span class="text-[10px] text-gray-400">€</span>
+                                <td class="px-6 py-4 text-sm font-black text-gray-900 text-center whitespace-nowrap">
+                                    {{ (product.price / 100)|number_format(2, ',', ' ') }} <span class="text-[10px] text-gray-500" aria-hidden="true">€</span>
                                 </td>
 
-                                <td class="px-6 py-4 text-center">
+                                <td class="px-6 py-4 text-center whitespace-nowrap">
                                     {% if product.stock > 0 %}
                                         <div class="inline-flex flex-col items-center">
-                                            <span class="text-xs font-semibold text-green-500">{{ product.stock }}</span>
-                                            <span class="text-xs uppercase text-green-500 font-bold tracking-tighter">En stock</span>
+                                            <span class="text-xs font-semibold text-green-700">{{ product.stock }}</span>
+                                            <span class="text-xs uppercase text-green-700 font-bold tracking-tighter">En stock</span>
                                         </div>
                                     {% else %}
-                                        <span class="px-2 py-1 rounded bg-red-100 text-red-700 text-xs font-semibold uppercase tracking-tighter">Rupture</span>
+                                        <span class="px-2 py-1 rounded bg-red-100 text-red-800 text-xs font-semibold uppercase tracking-tighter">Rupture</span>
                                     {% endif %}
                                 </td>
                                 
-                                <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end gap-3 flex-nowrap">
-                                        <a href="{{ path('app_admin_product_edit', {id: product.id} )}}" 
-                                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all shadow-md">
-                                           Modifier
+                                        <a href="{{ path('app_admin_product_edit', {id: product.id} )}}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                            Modifier
                                         </a>
-
                                         <form method="post" action="{{ path('app_admin_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Confirmer la suppression ?');" class="inline-block">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-                                            <button class="h-9 w-9 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-lg transition-all border border-red-100 active:scale-90" title="Supprimer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            <button class="h-9 w-9 flex items-center justify-center text-red-700 bg-red-50 hover:bg-red-700 hover:text-white rounded-lg transition-all border border-red-200 active:scale-90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" aria-label="Supprimer {{ product.name }}" title="Supprimer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
                                         </form>
@@ -99,7 +97,7 @@
                         {% else %}
                             <tr>
                                 <td colspan="5" class="px-6 py-20 text-center">
-                                    <div class="text-gray-400 font-medium">Aucun produit n'a été ajouté au catalogue pour le moment.</div>
+                                    <div class="text-gray-500 font-medium">Aucun produit n'a été ajouté au catalogue pour le moment.</div>
                                 </td>
                             </tr>
                         {% endfor %}

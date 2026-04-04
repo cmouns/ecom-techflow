@@ -9,3 +9,21 @@
 
 controllers:
     resource: routing.controllers
+
+app_legal_mentions:
+    path: /mentions-legales
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        template: legal/mentions.html.twig
+
+app_legal_privacy:
+    path: /politique-confidentialite
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        template: legal/privacy.html.twig
+
+app_legal_cgv:
+    path: /cgv
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+    defaults:
+        template: legal/cgv.html.twig

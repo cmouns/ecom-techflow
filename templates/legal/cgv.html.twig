@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions Générales de Vente | Tech Flow{% endblock %}
+
+{% block body %}
+<main class="bg-gray-50 min-h-screen py-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-200">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-8 border-b border-gray-200 pb-4">Conditions Générales de Vente (CGV)</h1>
+            
+            <div class="space-y-8 text-gray-800 leading-relaxed">
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">1. Objet et acceptation</h2>
+                    <p>Les présentes Conditions Générales de Vente régissent les ventes de matériel informatique et d'équipements effectuées sur le site Tech Flow. En validant sa commande, le client déclare accepter sans réserve les présentes conditions.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">2. Prix et présentation des produits</h2>
+                    <p>Les prix de nos produits sont indiqués en euros toutes taxes comprises (TTC). Tech Flow se réserve le droit de modifier ses prix à tout moment, mais le produit sera toujours facturé sur la base du tarif en vigueur au moment exact de la validation de la commande.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">3. Paiement sécurisé</h2>
+                    <p>Le règlement de vos achats s'effectue intégralement lors de la commande par carte bancaire. La transaction est entièrement sécurisée grâce à la technologie de notre partenaire financier Stripe. Aucune commande ne sera expédiée avant la validation du paiement.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3">4. Droit de rétractation (Loi Hamon)</h2>
+                    <p>Conformément aux dispositions légales en vigueur, vous disposez d'un délai légal de 14 jours francs à compter de la réception de vos produits pour exercer votre droit de rétractation sans avoir à justifier de motifs ni à payer de pénalité, à l'exception des frais de retour qui restent à votre charge.</p>
+                </section>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

@@ -3,77 +3,84 @@
 {% block title %}Catalogue Tech-Flow | Matériel Informatique Professionnel{% endblock %}
 
 {% block body %}
-<main class="min-h-screen py-10">
+<main class="min-h-screen py-10 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {# --- En-tête --- #}
-        <header class="flex flex-col items-center md:block mb-10 pb-6 border-b border-gray-200">
-            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-                Tous les produits
-            </h1>
-            <p class="text-sm text-gray-700 mt-2" aria-live="polite">
-                {{ products|length }} produits trouvés
-            </p>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 pb-6 border-b border-gray-200 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight text-center md:text-left">
+                    Tous les produits
+                </h1>
+                <p class="text-sm text-gray-700 mt-2 text-center md:text-left" aria-live="polite">
+                    {{ products.getTotalItemCount }} produits trouvés
+                </p>
+            </div>
+            
+            <form method="get" class="flex items-center gap-3 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm w-full md:w-auto justify-between md:justify-start">
+                {% if app.request.query.get('category') %}
+                    <input type="hidden" name="category" value="{{ app.request.query.get('category') }}">
+                {% endif %}
+
+                <label for="sort" class="text-sm font-bold text-gray-900 whitespace-nowrap">Trier par :</label>
+                <select name="sort_by" id="sort" onchange="this.form.submit()" class="text-sm border-none bg-transparent focus:ring-2 focus:ring-blue-600 rounded cursor-pointer text-gray-900 font-medium outline-none">
+                    <option value="new" {% if app.request.query.get('sort_by') == 'new' or not app.request.query.get('sort_by') %}selected{% endif %}>Les plus récents</option>
+                    <option value="price_asc" {% if app.request.query.get('sort_by') == 'price_asc' %}selected{% endif %}>Prix : croissant</option>
+                    <option value="price_desc" {% if app.request.query.get('sort_by') == 'price_desc' %}selected{% endif %}>Prix : décroissant</option>
+                </select>
+            </form>
         </header>
 
-        {# --- Grille --- #}
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 md:gap-x-6 gap-y-5 md:gap-y-10">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-4 md:gap-x-6 gap-y-6 md:gap-y-10">
             {% for product in products %}
-                {# --- Carte Produit --- #}
-                <article class="bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col group">
+                <article class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col group">
                     
-                    {# --- Zone Image --- #}
-                    <div class="aspect-4/3 w-full rounded-t-lg bg-white flex items-center justify-center overflow-hidden p-4 relative">
-                        <img src="{{ asset('uploads/images/ecran.jpg') }}" 
-                            alt="Photo du produit : {{ product.name }}" 
-                            class="object-contain w-full h-full mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
+                    <div class="aspect-4/3 w-full rounded-t-lg bg-white flex items-center justify-center overflow-hidden p-3 sm:p-4 relative">
+                        {% if product.productImages is not empty %}
+                            {% set firstImage = product.productImages|first %}
+                            {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
+                        {% else %}
+                            {% set imageUrl = asset('uploads/images/ecran.jpg') %}
+                        {% endif %}
+                        
+                        <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
                     </div>
                     
-                    {# --- Contenu de la carte --- #}
-                    <div class="p-4 flex flex-col grow">
-                        {# --- Catégorie --- #}
-                        <span class="text-xs font-medium text-blue-800 bg-blue-50 px-1.5 py-0.5 rounded-full self-start mb-2">
+                    <div class="p-3 sm:p-4 flex flex-col grow">
+                        <span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-bold text-blue-800 bg-blue-50 px-2 py-1 rounded-sm self-start mb-2">
                             {{ product.category.name }}
                         </span>
                         
-                        {# --- Titre --- #}
-                        <h2 class="text-md font-semibold text-gray-900 hover:text-blue-800 mb-1">
+                        <h2 class="text-xs sm:text-sm font-bold text-gray-900 hover:text-blue-800 mb-1 line-clamp-2">
                             {{ product.name }}
                         </h2>
                         
-                        {# --- Description --- #}
-                        <p class="text-xs text-gray-700 line-clamp-2 mb-3">
-                            {{ product.description }}
-                        </p>
-                        
-                        {# --- Prix et stock --- #}
-                        <div class="mt-auto pt-3 border-t border-gray-100">
-                            <div class="flex justify-between items-baseline mb-3">
-                                {# --- Prix --- #}
-                                <span class="text-lg font-bold text-black" aria-label="Prix : {{ (product.price / 100)|number_format(2,',',' ')}} euros">
-                                    {{ (product.price / 100)|number_format(2,',',' ')}}€
-                                </span>                                
-                                {# --- Stock --- #}
-                                <span class="text-xs {{ product.stock > 0 ? 'text-green-800' : 'text-red-700' }} font-bold">
+                        <div class="mt-auto pt-3 sm:pt-4 border-t border-gray-100">
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-baseline gap-1 mb-3">
+                                
+                                <span class="text-base sm:text-lg font-black text-blue-700 whitespace-nowrap">
+                                    <span class="sr-only">Prix : </span>{{ (product.price / 100)|number_format(2,',',' ')}} €
+                                </span> 
+                                
+                                <span class="text-[10px] sm:text-[11px] {{ product.stock > 0 ? 'text-green-800' : 'text-red-700' }} font-bold uppercase tracking-wider whitespace-nowrap">
                                     {{ product.stock > 0 ? 'En stock' : 'Rupture' }}
                                 </span>
                             </div>
 
-                            {# --- Bouton de redirection --- #}
-                            <a href="{{ path('app_product_show', { slug: product.slug }) }}" 
-                               aria-label="Voir les détails du produit : {{ product.name }}"
-                               class="block text-center bg-black hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 text-white rounded-xl py-2.5 px-4 text-sm font-semibold transition-colors outline-none">
+                            <a href="{{ path('app_product_show', { slug: product.slug }) }}" aria-label="Voir le produit : {{ product.name }}" class="block text-center bg-blue-700 hover:bg-blue-900 text-white rounded-lg py-2.5 px-2 sm:px-4 text-xs font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 whitespace-nowrap">
                                 Voir le produit
                             </a>
                         </div>
                     </div>
                 </article>
             {% else %}
-                {# Si aucun produit #}
-                <div class="col-span-full text-center py-20 bg-white rounded-lg border border-gray-200 shadow-inner">
-                    <p class="text-gray-700 font-medium">Aucun produit disponible actuellement.</p>
+                <div class="col-span-full text-center py-20 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <p class="text-gray-800 font-bold">Aucun produit disponible actuellement.</p>
                 </div>
             {% endfor %}
+        </div>
+        
+        <div class="mt-12 flex justify-center">
+            {{ knp_pagination_render(products) }}
         </div>
     </div>
 </main>

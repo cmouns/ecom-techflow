@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture #{{ order.reference }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 20px; }
+        .header { width: 100%; margin-bottom: 40px; }
+        .logo-techflow { font-size: 28px; font-weight: bold; color: #2563eb; }
+        .company-details { width: 50%; float: left; }
+        .invoice-details { width: 50%; float: right; text-align: right; }
+        
+        .client-section { width: 100%; margin-top: 40px; clear: both; padding-top: 40px; }
+        .client-box { background-color: #f8fafc; padding: 15px; border: 1px solid #e2e8f0; width: 40%; float: right; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 50px; clear: both; }
+        th { background-color: #f1f5f9; padding: 12px; text-align: left; border-bottom: 2px solid #cbd5e1; color: #1e293b; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        
+        .total-box { margin-top: 30px; width: 40%; float: right; }
+        .total-table th, .total-table td { border: none; padding: 8px; }
+        .total-final { font-size: 18px; font-weight: bold; border-top: 2px solid #333 !important; }
+        
+        .footer { position: fixed; bottom: -20px; left: 0px; right: 0px; height: 50px; text-align: center; font-size: 10px; color: #475569; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="company-details">
+            <div class="logo-techflow">Tech-Flow</div>
+            <p>123 Avenue de l'Innovation<br>75001 Paris, France<br>SIRET : 123 456 789 00012</p>
+        </div>
+        <div class="invoice-details">
+            <h1 style="color: #334155; margin-bottom: 5px;">FACTURE</h1>
+            <p>
+                <strong>Référence :</strong> #{{ order.reference }}<br>
+                <strong>Date :</strong> {{ order.createdAt|date('d/m/Y') }}<br>
+                <strong>Statut :</strong> {% if order.status == 'PAID' %}Acquittée{% else %}En attente{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="client-section">
+        <div class="client-box">
+            <h3 style="margin-top: 0; margin-bottom: 10px; color: #334155;">Facturé et livré à :</h3>
+            <strong>{{ order.user.fullname|default(order.user.email) }}</strong><br>
+            {{ order.deliveryAddress|nl2br }}
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Désignation</th>
+                <th scope="col" class="text-center">Qté</th>
+                <th scope="col" class="text-right">Prix Unitaire</th>
+                <th scope="col" class="text-right">Montant Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td><strong>{{ item.productName }}</strong></td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-right">{{ (item.productPrice / 100)|number_format(2, ',', ' ') }} €</td>
+                    <td class="text-right">{{ ((item.productPrice * item.quantity) / 100)|number_format(2, ',', ' ') }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-box">
+        <table class="total-table">
+            <tr>
+                <th scope="row" class="text-right">Total HT :</th>
+                <td class="text-right">{{ ((order.totalPrice * 0.8) / 100)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+            <tr>
+                <th scope="row" class="text-right">TVA (20%) :</th>
+                <td class="text-right">{{ ((order.totalPrice * 0.2) / 100)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+            <tr>
+                <th scope="row" class="text-right total-final">TOTAL TTC :</th>
+                <td class="text-right total-final">{{ (order.totalPrice / 100)|number_format(2, ',', ' ') }} €</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        Tech-Flow SAS au capital de 10 000€ - N° TVA Intracommunautaire : FR 12 345678912<br>
+        En cas de retard de paiement, une pénalité égale à 3 fois le taux d'intérêt légal sera exigible.
+    </div>
+
+</body>
+</html>

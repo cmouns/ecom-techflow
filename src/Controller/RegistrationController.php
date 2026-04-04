@@ -14,29 +14,40 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
+    /**
+     * Gère l'inscription d'un nouvel utilisateur sur le site.
+     */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        Security $security,
+        EntityManagerInterface $entityManager,
+    ): Response {
         $user = new User();
+        // Création du formulaire d'inscription
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récupère le mot de passe en clair saisi dans le formulaire
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
+            // Hash le mot de passe avant de l'enregistrer en base
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
+            // Demande à Doctrine de sauvegarder le nouvel utilisateur
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            // Message flash pour confirmer que ça a marché
+            $this->addFlash('success', 'Votre compte a été créé avec succès !');
 
-            // 1. On connecte l'utilisateur en session
+            // Une fois inscrit, on connecte automatiquement l'utilisateur
             $security->login($user, 'form_login', 'main');
 
-            // 2. On force la redirection vers la page d'accueil (la vitrine Tech Flow)
+            // Redirige vers la page d'accueil
             return $this->redirectToRoute('app_home');
         }
 

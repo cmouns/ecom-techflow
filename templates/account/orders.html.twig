@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes commandes{% endblock %}
+
+{% block body %}
+<main class="bg-gray-50 min-h-screen py-10">
+    <div class="container mx-auto px-4 max-w-5xl">
+        
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Historique de mes commandes</h1>
+            <p class="text-gray-600 mt-2">Retrouvez ici l'ensemble de vos achats récents.</p>
+        </div>
+
+        {% if orders is empty %}
+            <div class="bg-white rounded-lg shadow p-10 text-center border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Vous n'avez pas encore passé de commande</h2>
+                <p class="text-gray-600 mb-6">Votre historique est vide pour le moment. Découvrez notre catalogue et trouvez votre bonheur !</p>
+                <a href="{{ path('app_home') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg inline-block transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Découvrir nos produits
+                </a>
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-100 border-b border-gray-200">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-sm font-bold text-gray-700 uppercase whitespace-nowrap">Référence</th>
+                                <th scope="col" class="px-6 py-4 text-sm font-bold text-gray-700 uppercase text-center whitespace-nowrap">Date</th>
+                                <th scope="col" class="px-6 py-4 text-sm font-bold text-gray-700 uppercase text-center whitespace-nowrap">Total</th>
+                                <th scope="col" class="px-6 py-4 text-sm font-bold text-gray-700 uppercase text-center whitespace-nowrap">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for order in orders %}
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <a href="{{ path('app_account_order_show', {'reference': order.reference}) }}" class="font-bold text-blue-600 hover:text-blue-800 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1" aria-label="Voir la commande {{ order.reference }}">
+                                            {{ order.reference }}
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 text-center text-gray-600 whitespace-nowrap">
+                                        {{ order.createdAt|date('d/m/Y') }}
+                                    </td>
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                                        <div class="bg-gray-100 inline-block px-3 py-1 rounded border border-gray-300 font-bold text-gray-900">
+                                            {{ (order.totalPrice / 100)|number_format(2, ',', ' ') }} €
+                                        </div>
+                                    </td> 
+                                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                                        {% if order.status == 'PAID' %}
+                                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">
+                                                Payée
+                                            </span>
+                                        {% else %}
+                                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold">
+                                                En attente
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

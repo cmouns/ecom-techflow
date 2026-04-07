@@ -31,16 +31,16 @@
             
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {% for product in products %}
-                    <article class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col group p-4">
+                    <article class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col h-full group p-4">
                         
-                        <div class="aspect-4/3 w-full rounded-md bg-gray-50 flex items-center justify-center overflow-hidden mb-4 relative">
+                        <div class="h-48 w-full rounded-md bg-gray-50 flex items-center justify-center overflow-hidden mb-4 relative">
                             {% if product.productImages is not empty %}
                                 {% set firstImage = product.productImages|first %}
                                 {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
                             {% else %}
                                 {% set imageUrl = asset('uploads/images/ecran.jpg') %}
                             {% endif %}
-                            <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
+                            <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full p-2 mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
                         </div>
 
                         <span class="text-[10px] font-bold text-blue-800 uppercase tracking-wider mb-1">

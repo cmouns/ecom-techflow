@@ -36,21 +36,25 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             {% for product in products %}
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col group p-4 hover:shadow-md transition-shadow">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col h-full group p-4 hover:shadow-md transition-shadow">
                     
-                    <div class="aspect-4/3 w-full rounded-md bg-gray-50 flex items-center justify-center overflow-hidden mb-4 relative">
+                    <div class="h-48 w-full rounded-md bg-gray-50 flex items-center justify-center overflow-hidden mb-4 relative">
                         {% if product.productImages is not empty %}
                             {% set firstImage = product.productImages|first %}
                             {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
                         {% else %}
                             {% set imageUrl = asset('uploads/images/ecran.jpg') %}
                         {% endif %}
-                        <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full p-2 mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
                     </div>
 
                     <div class="text-sm font-bold text-gray-900 truncate">{{ product.name }}</div>
                     <div class="text-blue-700 font-bold mt-2"><span class="sr-only">Prix : </span>{{ (product.price / 100)|number_format(2, ',', ' ') }}€</div>
-                    <a href="{{ path('app_product_show', { slug: product.slug }) }}" aria-label="Voir les détails du produit : {{ product.name }}" class="mt-4 text-center bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg hover:bg-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Voir</a>
+                    
+                    {# mt-auto pousse le bouton tout en bas de la carte flex #}
+                    <a href="{{ path('app_product_show', { slug: product.slug }) }}" aria-label="Voir les détails du produit : {{ product.name }}" class="mt-auto block w-full text-center bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg hover:bg-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+                        Voir
+                    </a>
                 </div>
             {% else %}
                 <p class="text-gray-600 col-span-4 text-center py-10 font-medium">Aucun produit pour le moment.</p>

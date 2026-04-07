@@ -44,8 +44,8 @@
                                         <div class="h-14 w-14 shrink-0 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden shadow-inner">
                                             {% if product.productImages is not empty %}
                                                 <img src="{{ asset('uploads/images/' ~ product.productImages|first.filename) }}" 
-                                                     class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                                                     alt="Miniature de {{ product.name }}">
+                                                    class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                                    alt="Miniature de {{ product.name }}">
                                             {% else %}
                                                 <div class="h-full w-full flex items-center justify-center text-[10px] text-gray-500 font-bold" aria-hidden="true">NO PIC</div>
                                             {% endif %}

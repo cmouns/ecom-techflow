@@ -32,9 +32,9 @@
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-3 sm:gap-x-4 md:gap-x-6 gap-y-6 md:gap-y-10">
             {% for product in products %}
-                <article class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col group">
+                <article class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col h-full group">
                     
-                    <div class="aspect-4/3 w-full rounded-t-lg bg-white flex items-center justify-center overflow-hidden p-3 sm:p-4 relative">
+                    <div class="h-52 w-full rounded-t-lg bg-white flex items-center justify-center overflow-hidden p-3 sm:p-4 relative">
                         {% if product.productImages is not empty %}
                             {% set firstImage = product.productImages|first %}
                             {% set imageUrl = asset('uploads/images/' ~ firstImage.filename) %}
@@ -42,7 +42,7 @@
                             {% set imageUrl = asset('uploads/images/ecran.jpg') %}
                         {% endif %}
                         
-                        <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <img src="{{ imageUrl }}" alt="{{ product.name }}" class="object-contain w-full h-full p-2 mix-blend-multiply transform group-hover:scale-105 transition-transform duration-500 ease-out">
                     </div>
                     
                     <div class="p-3 sm:p-4 flex flex-col grow">

@@ -111,4 +111,32 @@ class CheckoutController extends AbstractController
             'addressForm' => $form->createView(),
         ]);
     }
+
+    /**
+     * Supprime une adresse de livraison.
+     */
+    #[Route('/address/delete/{id}', name: 'app_address_delete', methods: ['POST'])]
+    public function deleteAddress(Request $request, DeliveryInfo $deliveryInfo, EntityManagerInterface $em): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // Vérifie que l'adresse appartient bien à la personne connectée
+        if ($deliveryInfo->getUser() !== $user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // Vérifie le token CSRF pour bloquer les failles de sécurité
+        if ($this->isCsrfTokenValid('delete'.$deliveryInfo->getId(), $request->request->get('_token'))) {
+            $em->remove($deliveryInfo);
+            $em->flush();
+
+            $this->addFlash('success', 'L\'adresse a bien été supprimée.');
+        } else {
+            $this->addFlash('error', 'Action non autorisée.');
+        }
+
+        // Redirige vers la page de choix d'adresse
+        return $this->redirectToRoute('app_checkout_index');
+    }
 }

@@ -17,11 +17,23 @@
         <div class="lg:col-span-8 space-y-10">
             
             <section aria-labelledby="address-selection-title">
-                <h2 id="address-selection-title" class="text-2xl font-bold mb-6 text-gray-900">Sélectionnez une adresse de livraison</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="address-selection-title" class="text-2xl font-bold text-gray-900">Sélectionnez une adresse de livraison</h2>
+                </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {% for address in userAddresses %}
-                        <div class="shadow-sm rounded-md p-5 bg-white border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all relative">
+                        <div class="shadow-sm rounded-md p-5 bg-white border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all relative group">
+                            
+                            <form method="post" action="{{ path('app_address_delete', {'id': address.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette adresse ?');" class="absolute top-4 right-4">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ address.id) }}">
+                                <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 rounded p-1" aria-label="Supprimer l'adresse {{ address.label }}" title="Supprimer cette adresse">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+
                             <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-2">{{ address.label }}</span>
                             <p class="font-bold text-gray-900">{{ address.firstName }} {{ address.lastName }}</p>
                             <p class="text-sm text-gray-700">{{ address.address }}</p>
@@ -32,6 +44,10 @@
                             aria-label="Utiliser cette adresse : {{ address.label }}">
                                 Utiliser cette adresse
                             </a>
+                        </div>
+                    {% else %}
+                        <div class="col-span-full p-6 text-center border-2 border-dashed border-gray-300 rounded-lg text-gray-500">
+                            Vous n'avez pas encore d'adresse enregistrée.
                         </div>
                     {% endfor %}
                 </div>
@@ -107,15 +123,15 @@
             <div class="sticky top-6 rounded-md p-6 bg-white border border-gray-200 shadow-sm">
                 <h2 class="text-lg font-bold mb-6 text-gray-900">Récapitulatif de commande</h2>
                 
-                <div class="space-y-4 mb-6 max-h-72 overflow-y-auto pr-2">
+                <section class="space-y-4 mb-6 max-h-72 overflow-y-auto pr-2" aria-label="Liste des articles">
                     {% for item in items %}
                         <div class="flex gap-3">
-                            <div class="w-14 h-14 bg-gray-50 rounded border border-gray-200 shrink-0 overflow-hidden flex items-center justify-center">
+                            <div class="w-14 h-14 bg-white rounded border border-gray-200 shrink-0 overflow-hidden flex items-center justify-center">
                                 {% if item.product.productImages is not empty %}
                                     {% set firstImage = item.product.productImages|first %}
-                                    <img src="{{ asset('uploads/images/' ~ firstImage.filename) }}" alt="Miniature de {{ item.product.name }}" class="w-full h-full object-cover mix-blend-multiply">
+                                    <img src="{{ asset('uploads/images/' ~ firstImage.filename) }}" alt="Miniature de {{ item.product.name }}" class="w-full h-full object-contain p-1 mix-blend-multiply">
                                 {% else %}
-                                    <img src="{{ asset('uploads/images/ecran.jpg') }}" alt="Miniature par défaut pour {{ item.product.name }}" class="w-full h-full object-cover mix-blend-multiply">
+                                    <img src="{{ asset('uploads/images/ecran.jpg') }}" alt="Miniature par défaut pour {{ item.product.name }}" class="w-full h-full object-contain p-1 mix-blend-multiply">
                                 {% endif %}
                             </div>
                             <div class="flex-1 min-w-0">
@@ -125,7 +141,7 @@
                             <p class="text-xs font-bold text-gray-900">{{ ((item.product.price * item.quantity) / 100)|number_format(2, ',', ' ') }}€</p>
                         </div>
                     {% endfor %}
-                </div>
+                </section>
 
                 <div class="border-t border-gray-200 pt-4 space-y-2">
                     <div class="flex justify-between text-sm">

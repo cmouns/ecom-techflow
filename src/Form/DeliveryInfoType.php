@@ -1,195 +1,65 @@
 <?php
 
-namespace App\Entity;
+namespace App\Form;
 
-use App\Repository\DeliveryInfoRepository;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\DeliveryInfo;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-#[ORM\Entity(repositoryClass: DeliveryInfoRepository::class)]
-class DeliveryInfo
+/**
+ * @extends AbstractType<DeliveryInfo>
+ */
+class DeliveryInfoType extends AbstractType
 {
-    public const PATTERN_LETTERS = '/^[\p{L}\s\-\']+$/u';
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Veuillez donner un nom à cette adresse (ex: Domicile).')]
-    #[Assert\Length(max: 255)]
-    private string $label;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
-    #[Assert\Length(max: 255)]
-    #[Assert\Regex(
-        pattern: self::PATTERN_LETTERS,
-        message: 'Le prénom ne peut contenir que des lettres.'
-    )]
-    private string $firstName;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
-    #[Assert\Length(max: 255)]
-    #[Assert\Regex(
-        pattern: self::PATTERN_LETTERS,
-        message: 'Le nom ne peut contenir que des lettres.'
-    )]
-    private string $lastName;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'L\'adresse complète est obligatoire.')]
-    #[Assert\Length(max: 255)]
-    private string $address;
-
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: 'Le code postal est obligatoire.')]
-    #[Assert\Length(max: 20)]
-    #[Assert\Regex(
-        pattern: '/^[0-9]+$/',
-        message: 'Le code postal ne doit contenir que des chiffres.'
-    )]
-    private string $postalCode;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'La ville est obligatoire.')]
-    #[Assert\Length(max: 255)]
-    #[Assert\Regex(
-        pattern: self::PATTERN_LETTERS,
-        message: 'La ville ne peut contenir que des lettres.'
-    )]
-    private string $city;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le pays est obligatoire.')]
-    #[Assert\Length(max: 255)]
-    private string $country;
-
-    #[ORM\Column(length: 30)]
-    #[Assert\NotBlank(message: 'Le numéro de téléphone est obligatoire pour la livraison.')]
-    #[Assert\Length(max: 30)]
-    #[Assert\Regex(
-        pattern: '/^[0-9\+\-\s\.]+$/',
-        message: 'Le format du numéro de téléphone est invalide.'
-    )]
-    private string $phone;
-
-    #[ORM\ManyToOne(inversedBy: 'deliveryInfos')]
-    #[ORM\JoinColumn(nullable: false)]
-    private User $user;
-
-    public function getId(): ?int
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        return $this->id;
+        $builder
+            ->add('label', TextType::class, [
+                'label' => 'Nom de cette adresse',
+                'attr' => ['placeholder' => 'Ex: Ma Maison, Mon Bureau...'],
+            ])
+            ->add('firstName', TextType::class, [
+                'label' => 'Prénom',
+                'attr' => ['placeholder' => 'Prénom'],
+            ])
+            ->add('lastName', TextType::class, [
+                'label' => 'Nom',
+                'attr' => ['placeholder' => 'Nom'],
+            ])
+            ->add('address', TextType::class, [
+                'label' => 'Adresse complète',
+                'attr' => ['placeholder' => '123 rue de la Paix'],
+            ])
+            ->add('postalCode', TextType::class, [
+                'label' => 'Code Postal',
+                'attr' => ['placeholder' => '13000'],
+            ])
+            ->add('city', TextType::class, [
+                'label' => 'Ville',
+                'attr' => ['placeholder' => 'Marseille'],
+            ])
+            ->add('country', CountryType::class, [
+                'label' => 'Pays',
+                'preferred_choices' => ['FR'],
+            ])
+            ->add('phone', TelType::class, [
+                'label' => 'Numéro de téléphone',
+                'attr' => ['placeholder' => '+33 6 12 34 56 78'],
+            ])
+        ;
     }
 
-    public function getLabel(): string
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        return $this->label;
-    }
-
-    public function setLabel(string $label): static
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): static
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): static
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    public function getAddress(): string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(string $address): static
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getPostalCode(): string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(string $postalCode): static
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getCity(): string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): static
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    public function getCountry(): string
-    {
-        return $this->country;
-    }
-
-    public function setCountry(string $country): static
-    {
-        $this->country = $country;
-
-        return $this;
-    }
-
-    public function getPhone(): string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(string $phone): static
-    {
-        $this->phone = $phone;
-
-        return $this;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
+        $resolver->setDefaults([
+            'data_class' => DeliveryInfo::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => '_token',
+            'csrf_token_id' => 'delivery_info_item',
+        ]);
     }
 }

@@ -63,48 +63,62 @@
                     <h2 class="text-xl font-bold mb-1 text-gray-900">Saisir une nouvelle adresse</h2>
                     <p class="text-sm text-gray-600 mb-8">Les champs marqués d'un astérisque (*) sont obligatoires.</p>
                     
-                    {{ form_start(addressForm, {'attr': {'class': 'space-y-6'}}) }}
+                    {{ form_start(addressForm, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
                         
+                        {% if not addressForm.vars.valid %}
+                            <div class="mb-4 text-red-600 text-sm font-bold" role="alert">
+                                {{ form_errors(addressForm) }}
+                            </div>
+                        {% endif %}
+
                         <div>
                             {{ form_label(addressForm.label, 'Nom de cette adresse (ex: Maison) *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                            <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.label) }}</div>
                             {{ form_widget(addressForm.label, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none transition-shadow font-medium text-gray-900'}}) }}
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 {{ form_label(addressForm.firstName, 'Prénom *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                                <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.firstName) }}</div>
                                 {{ form_widget(addressForm.firstName, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900'}}) }}
                             </div>
                             <div>
                                 {{ form_label(addressForm.lastName, 'Nom de famille *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                                <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.lastName) }}</div>
                                 {{ form_widget(addressForm.lastName, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900'}}) }}
                             </div>
                         </div>
 
                         <div>
                             {{ form_label(addressForm.phone, 'Numéro de téléphone *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                            <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.phone) }}</div>
                             {{ form_widget(addressForm.phone, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900'}}) }}
                             <p class="text-[11px] text-gray-600 mt-1 italic">Indispensable pour faciliter la livraison du colis.</p>
                         </div>
 
                         <div>
                             {{ form_label(addressForm.address, "Adresse complète *", {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                            <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.address) }}</div>
                             {{ form_widget(addressForm.address, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900', 'placeholder': 'N° et nom de rue'}}) }}
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 {{ form_label(addressForm.postalCode, 'Code postal *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                                <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.postalCode) }}</div>
                                 {{ form_widget(addressForm.postalCode, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900'}}) }}
                             </div>
                             <div>
                                 {{ form_label(addressForm.city, 'Ville *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                                <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.city) }}</div>
                                 {{ form_widget(addressForm.city, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900'}}) }}
                             </div>
                         </div>
 
                         <div>
                             {{ form_label(addressForm.country, 'Pays/région *', {'label_attr': {'class': 'block text-sm font-bold text-gray-900 mb-1'}}) }}
+                            <div class="text-red-600 text-sm mb-1 font-bold">{{ form_errors(addressForm.country) }}</div>
                             {{ form_widget(addressForm.country, {'attr': {'class': 'w-full border border-gray-300 rounded-md py-2 px-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none font-medium text-gray-900 bg-gray-50'}}) }}
                         </div>
 

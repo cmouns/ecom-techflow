@@ -115,7 +115,7 @@ class CheckoutController extends AbstractController
     /**
      * Supprime une adresse de livraison.
      */
-    #[Route('/address/delete/{id}', name: 'app_address_delete', methods: ['POST'])]
+    #[Route('/address/delete/{id}', name: 'address_delete', methods: ['POST'])]
     public function deleteAddress(Request $request, DeliveryInfo $deliveryInfo, EntityManagerInterface $em): Response
     {
         /** @var User $user */

@@ -201,7 +201,7 @@ class StripeController extends AbstractController
 
             if ($order) {
                 // Passe la commande en statut PAID
-                $order->setStatus('PAID');
+                $order->setStatus(Order::STATUS_PAID);
 
                 // Met à jour les stocks des produits
                 $orderItems = $orderItemRepository->findBy(['purchase' => $order]);

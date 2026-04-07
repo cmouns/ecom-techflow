@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: DeliveryInfoRepository::class)]
 class DeliveryInfo
 {
+    public const PATTERN_LETTERS = '/^[\p{L}\s\-\']+$/u';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -22,11 +24,19 @@ class DeliveryInfo
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le prénom est obligatoire.')]
     #[Assert\Length(max: 255)]
+    #[Assert\Regex(
+        pattern: self::PATTERN_LETTERS,
+        message: 'Le prénom ne peut contenir que des lettres.'
+    )]
     private string $firstName;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
     #[Assert\Length(max: 255)]
+    #[Assert\Regex(
+        pattern: self::PATTERN_LETTERS,
+        message: 'Le nom ne peut contenir que des lettres.'
+    )]
     private string $lastName;
 
     #[ORM\Column(length: 255)]
@@ -38,14 +48,18 @@ class DeliveryInfo
     #[Assert\NotBlank(message: 'Le code postal est obligatoire.')]
     #[Assert\Length(max: 20)]
     #[Assert\Regex(
-        pattern: '/^[0-9A-Za-z\s\-]+$/',
-        message: 'Le format du code postal est invalide.'
+        pattern: '/^[0-9]+$/',
+        message: 'Le code postal ne doit contenir que des chiffres.'
     )]
     private string $postalCode;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'La ville est obligatoire.')]
     #[Assert\Length(max: 255)]
+    #[Assert\Regex(
+        pattern: self::PATTERN_LETTERS,
+        message: 'La ville ne peut contenir que des lettres.'
+    )]
     private string $city;
 
     #[ORM\Column(length: 255)]

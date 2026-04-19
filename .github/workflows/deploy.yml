@@ -1,51 +1,52 @@
 name: Deploiement sur Alwaysdata
 
-# Condition du lancement du robot
 on:
   push:
     branches:
-      - main # Se déclenche seulement lors d'un push sur la branche main
+      - main
 
-# Que doit faire le robot
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v4
 
-      - name: Configuration PHP
-        uses: shivammathur/setup-php@v2
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: ecom_techflow_test
+        ports:
+          - 3306:3306
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
 
-      - name: Installation des dependances
-        run: composer install --prefer-dist --no-progress
+      - run: composer install --prefer-dist --no-progress
 
-      - name: Analyse statique PHPStan
-        run: vendor/bin/phpstan analyse src
+      - run: php bin/console tailwind:build --env=test
 
-      - name: Tests PHPUnit
-        run: vendor/bin/phpunit
+      - run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
-      - name: Connexion au serveur et mise a jour
+      - run: vendor/bin/phpstan analyse src
+
+      - run: vendor/bin/phpunit
+
+      - name: Déploiement
         uses: appleboy/ssh-action@master
         with:
-          # Le robot utilise les clés cachées initialisées dans les paramètres github
-          host: ${{ secrets.SSH_HOST }} 
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          
-          # Le code que va taper le robot à notre place
           script: |
             cd ~/www/
             git fetch origin main
             git reset --hard origin/main
             composer install --no-dev --optimize-autoloader
             php bin/console doctrine:migrations:migrate --no-interaction
-            
             php bin/console tailwind:build --env=prod
             php bin/console asset-map:compile --env=prod
-            
             php bin/console cache:clear --env=prod

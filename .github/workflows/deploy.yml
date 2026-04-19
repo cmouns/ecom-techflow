@@ -1,4 +1,4 @@
-name: Deploiement sur Alwaysdata avec Base de Donnees
+name: Deploiement sur Alwaysdata
 
 # Condition du lancement du robot
 on:
@@ -12,6 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Installation des dependances
+        run: composer install --prefer-dist --no-progress
+
+      - name: Analyse statique PHPStan
+        run: vendor/bin/phpstan analyse src
+
+      - name: Tests PHPUnit
+        run: vendor/bin/phpunit
+
       - name: Connexion au serveur et mise a jour
         uses: appleboy/ssh-action@master
         with:
@@ -28,9 +45,7 @@ jobs:
             composer install --no-dev --optimize-autoloader
             php bin/console doctrine:migrations:migrate --no-interaction
             
-            # --- COMPILATION DU FRONT-END (TAILWIND & JS) ---
             php bin/console tailwind:build --env=prod
             php bin/console asset-map:compile --env=prod
-            # ------------------------------------------------
             
             php bin/console cache:clear --env=prod

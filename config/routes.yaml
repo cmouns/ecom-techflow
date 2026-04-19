@@ -27,3 +27,7 @@ app_legal_cgv:
     controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
     defaults:
         template: legal/cgv.html.twig
+
+
+
+        

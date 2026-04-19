@@ -14,7 +14,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-          MYSQL_DATABASE: ecom_techflow_test_test
+          MYSQL_DATABASE: ecom_techflow_test
         ports:
           - 3306:3306
 
@@ -29,7 +29,7 @@ jobs:
 
       - run: php bin/console tailwind:build --env=test
 
-      - run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
+      - run: php bin/console doctrine:schema:create --env=test
 
       - run: vendor/bin/phpstan analyse src
 

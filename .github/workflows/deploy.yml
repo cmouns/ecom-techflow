@@ -14,7 +14,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-          MYSQL_DATABASE: ecom_techflow_test
+          MYSQL_DATABASE: ecom_techflow_test_test
         ports:
           - 3306:3306
 

@@ -2,11 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Category;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use App\Entity\Category;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Product>
@@ -37,15 +37,15 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-   /**
+    /**
      * Recherche les produits avec filtres et tri.
      */
-    public function findFiltered(?Category $category, string $sort) : QueryBuilder
+    public function findFiltered(?Category $category, string $sort): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
 
         // Gère le filtre de catégorie avec protection anti-injection
-        if ($category !== null) {
+        if (null !== $category) {
             $qb->andWhere('p.category = :category')
                ->setParameter('category', $category);
         }
@@ -65,4 +65,3 @@ class ProductRepository extends ServiceEntityRepository
         return $qb;
     }
 }
-

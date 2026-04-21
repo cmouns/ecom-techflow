@@ -19,16 +19,22 @@ class CartService
      */
     public function add(int $id, int $quantity = 1): void
     {
+        $product = $this->productRepository->find($id);
+        if (!$product) {
+            return;
+        }
         // On passe par le RequestStack pour accéder à la session de l'utilisateur
         $session = $this->requestStack->getSession();
         $cart = $session->get('cart', []);
 
-        // Si le produit n'est pas encore dans le panier, on l'initialise à 0
-        if (empty($cart[$id])) {
-            $cart[$id] = 0;
+        // On calcule combien il en a déjà dans le panier
+        $currentQuantity = empty($cart[$id]) ? 0 : $cart[$id];
+
+        if (($currentQuantity + $quantity) > $product->getStock()) {
+            throw new \LogicException('Stock insuffisant pour ce produit.');
         }
 
-        $cart[$id] += $quantity;
+        $cart[$id] = $currentQuantity + $quantity;
 
         // Sauvegarde le nouveau tableau dans la session
         $session->set('cart', $cart);

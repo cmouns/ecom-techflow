@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Category;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<Product>
@@ -34,4 +36,33 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+   /**
+     * Recherche les produits avec filtres et tri.
+     */
+    public function findFiltered(?Category $category, string $sort) : QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        // Gère le filtre de catégorie avec protection anti-injection
+        if ($category !== null) {
+            $qb->andWhere('p.category = :category')
+               ->setParameter('category', $category);
+        }
+
+        switch ($sort) {
+            case 'price_asc':
+                $qb->orderBy('p.price', 'ASC');
+                break;
+            case 'price_desc':
+                $qb->orderBy('p.price', 'DESC');
+                break;
+            default:
+                $qb->orderBy('p.id', 'DESC');
+                break;
+        }
+
+        return $qb;
+    }
 }
+

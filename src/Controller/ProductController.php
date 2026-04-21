@@ -22,38 +22,20 @@ class ProductController extends AbstractController
         Request $request,
         PaginatorInterface $paginator,
     ): Response {
-        // Récupère les paramètres de l'URL pour les filtres et le tri
         $categorySlug = $request->query->get('category');
         $sort = $request->query->get('sort_by', 'new');
 
-        // Prépare ma requête personnalisée avec le QueryBuilder
-        $qb = $productRepository->createQueryBuilder('p');
-
-        // Filtre les produits au choix d'une catégorie
+        $category = null;
         if ($categorySlug) {
             $category = $categoryRepository->findOneBy(['slug' => $categorySlug]);
-            if ($category) {
-                // Lie les produits à la catégorie trouvée
-                $qb->andWhere('p.category = :category')
-                   ->setParameter('category', $category);
-            }
         }
+        // Appel de la requête personnalisée
+        $query = $productRepository->findFiltered($category, $sort);
 
-        // Gestion de la logique de tri
-        if ('price_asc' === $sort) {
-            $qb->orderBy('p.price', 'ASC');
-        } elseif ('price_desc' === $sort) {
-            $qb->orderBy('p.price', 'DESC');
-        } else {
-            // Trie par id pour voir les derniers ajouts
-            $qb->orderBy('p.id', 'DESC');
-        }
-
-        // Utilise le bundle KnpPaginator pour limiter à 12 produits par page
         $products = $paginator->paginate(
-            $qb->getQuery(), // Ma requête préparée
-            $request->query->getInt('page', 1), // Numéro de la page actuelle
-            12 // Nombre d'éléments par page
+            $query,
+            $request->query->getInt('page', 1),
+            12
         );
 
         return $this->render('product/index.html.twig', [

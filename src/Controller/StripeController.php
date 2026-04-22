@@ -200,6 +200,10 @@ class StripeController extends AbstractController
             $order = $orderRepository->findOneBy(['stripeSessionId' => $sessionId]);
 
             if ($order) {
+                if (Order::STATUS_PAID === $order->getStatus()) {
+                    // La commande est déjà payée
+                    return new Response('Commande déjà traitée', 200);
+                }
                 // Passe la commande en statut PAID
                 $order->setStatus(Order::STATUS_PAID);
 

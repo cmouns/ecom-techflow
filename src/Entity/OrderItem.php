@@ -29,7 +29,7 @@ class OrderItem
     #[Assert\Positive(message: 'La quantité doit être au moins de 1.')]
     private int $quantity;
 
-    #[ORM\ManyToOne(inversedBy: 'product')]
+    #[ORM\ManyToOne(inversedBy: 'orderItems')]
     #[ORM\JoinColumn(nullable: false)]
     private Order $purchase;
 

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Exception\CartException;
 use App\Repository\ProductRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -21,7 +22,7 @@ class CartService
     {
         $product = $this->productRepository->find($id);
         if (!$product) {
-            return;
+            throw new CartException('Produit introuvable.');
         }
         // On passe par le RequestStack pour accéder à la session de l'utilisateur
         $session = $this->requestStack->getSession();
@@ -31,7 +32,7 @@ class CartService
         $currentQuantity = empty($cart[$id]) ? 0 : $cart[$id];
 
         if (($currentQuantity + $quantity) > $product->getStock()) {
-            throw new \LogicException('Stock insuffisant pour ce produit.');
+            throw new CartException('Stock insuffisant pour ce produit.');
         }
 
         $cart[$id] = $currentQuantity + $quantity;

@@ -17,7 +17,6 @@ cd ecom_techflow
 
 ```bash
 composer install
-npm install
 ```
 
 **3. Créer le fichier `.env.local`** à la racine du projet avec les variables suivantes :

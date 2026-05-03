@@ -50,8 +50,6 @@
 
                     <div class="text-sm font-bold text-gray-900 truncate">{{ product.name }}</div>
                     <div class="text-blue-700 font-bold mt-2"><span class="sr-only">Prix : </span>{{ (product.price / 100)|number_format(2, ',', ' ') }}€</div>
-                    
-                    {# mt-auto pousse le bouton tout en bas de la carte flex #}
                     <a href="{{ path('app_product_show', { slug: product.slug }) }}" aria-label="Voir les détails du produit : {{ product.name }}" class="mt-auto block w-full text-center bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg hover:bg-blue-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
                         Voir
                     </a>

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\CartException;
 use App\Service\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,9 +35,12 @@ class CartController extends AbstractController
         $quantity = (int) $request->request->get('quantity', 1);
 
         // Délègue l'ajout au service
-        $cartService->add($id, $quantity);
-
-        $this->addFlash('success', 'Produit ajouté au panier !');
+        try {
+            $cartService->add($id, $quantity);
+            $this->addFlash('success', 'Produit ajouté au panier !');
+        } catch (CartException $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
 
         return $this->redirectToRoute('app_cart_index');
     }
